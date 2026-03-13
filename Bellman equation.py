@@ -30,7 +30,7 @@ def bellmanEquation(rewardMatrix,gamma,max_iterations,tolerance):
 
     return v_new
 
-def extract_policy(V, rewardMatrix, gamma):
+def policy_extraction(V, rewardMatrix, gamma):
 
     n = len(rewardMatrix)
     policy = np.zeros(n)
@@ -47,7 +47,7 @@ def extract_policy(V, rewardMatrix, gamma):
     return policy
 
 V= bellmanEquation(rewardMatrix, gamma, 1000, 1e-3)
-policy = extract_policy(V, rewardMatrix, gamma)
+policy = policy_extraction(V, rewardMatrix, gamma)
 
 print("Optimal ordering policy:")
 print(policy)
