@@ -26,7 +26,6 @@ def bellmanEquation(rewardMatrix,gamma,max_iterations,tolerance):
     return v_new
 
 def policy_extraction(V, rewardMatrix, gamma):
-
     n = len(rewardMatrix)
     policy = np.zeros(n)
     for state in range(n):
