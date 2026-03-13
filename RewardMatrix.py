@@ -3,8 +3,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from ProbCalculation import roundedProb,statespaceLength
 
-print(roundedProb)
-
 rewardMatrix=np.ones((statespaceLength,statespaceLength))*10e6
 
 OrderCost=3
@@ -22,21 +20,19 @@ for state in range(statespaceLength):
             ExpectedCost+=addedCost*roundedProb[demand]
         rewardMatrix[state,action]=ExpectedCost
 
-print(rewardMatrix)
 if __name__ == "__main__":
-    mask= rewardMatrix >=1e6
+    mask= rewardMatrix >=1e6 #Hide invalid state,action pairs
     plt.figure(figsize=(8,6))
     sns.heatmap(
         np.round(rewardMatrix,0),
         annot=True,         # show numbers in cells
         cmap="coolwarm",    # color map
         mask=mask,
-        xticklabels=[f"A{a}" for a in range(rewardMatrix.shape[1])],
-        yticklabels=[f"S{s}" for s in range(rewardMatrix.shape[0])]
+        xticklabels=[f"A{a}" for a in range(statespaceLength)],
+        yticklabels=[f"S{s}" for s in range(statespaceLength)]
     )
     plt.title("Reward Matrix Heatmap")
     plt.xlabel("Action")
     plt.ylabel("State")
     plt.show()
 
-print(rewardMatrix[0,0])

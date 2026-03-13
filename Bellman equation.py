@@ -1,12 +1,8 @@
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 from ProbCalculation import roundedProb
-
 from RewardMatrix import rewardMatrix
 
-gamma=0.90
-
+gamma=0.95
 
 def bellmanEquation(rewardMatrix,gamma,max_iterations,tolerance):
 
@@ -27,7 +23,6 @@ def bellmanEquation(rewardMatrix,gamma,max_iterations,tolerance):
         if np.max(np.abs(v_new - v_old)) < tolerance:
             break
         v_old= v_new.copy()
-
     return v_new
 
 def policy_extraction(V, rewardMatrix, gamma):
@@ -51,6 +46,3 @@ policy = policy_extraction(V, rewardMatrix, gamma)
 
 print("Optimal ordering policy:")
 print(policy)
-
-print(V)
-print(rewardMatrix[0,0])
