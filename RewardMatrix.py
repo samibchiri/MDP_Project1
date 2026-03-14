@@ -3,23 +3,27 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from ProbCalculation import roundedProb,statespaceLength
 
-rewardMatrix=np.ones((statespaceLength,statespaceLength))*10e6
+OrderCost = 3
+HoldingCost = 1
+ShortageCost = 5
 
-OrderCost=3
-HoldingCost=1
-ShortageCost=5
 
-for state in range(statespaceLength):
-    for action in range(statespaceLength-state):
-        ExpectedCost=0
-        for demand in range(statespaceLength):
-            produced= action
-            leftOver=max(0,(state+produced)-demand)
-            shortage=max(0,demand-(state+produced))
-            addedCost=OrderCost*produced+HoldingCost*leftOver+ShortageCost*shortage
-            ExpectedCost+=addedCost*roundedProb[demand]
-        rewardMatrix[state,action]=ExpectedCost
+def rewardMatrixMaker(OrderCost,HoldingCost,ShortageCost):
+    rewardMatrix = np.ones((statespaceLength, statespaceLength)) * 10e6
 
+    for state in range(statespaceLength):
+        for action in range(statespaceLength - state):
+            ExpectedCost = 0
+            for demand in range(statespaceLength):
+                produced = action
+                leftOver = max(0, (state + produced) - demand)
+                shortage = max(0, demand - (state + produced))
+                addedCost = OrderCost * produced + HoldingCost * leftOver + ShortageCost * shortage
+                ExpectedCost += addedCost * roundedProb[demand]
+            rewardMatrix[state, action] = ExpectedCost
+    return rewardMatrix
+
+rewardMatrix=rewardMatrixMaker(OrderCost,HoldingCost,ShortageCost)
 if __name__ == "__main__":
     mask= rewardMatrix >=1e6 #Hide invalid state,action pairs
     plt.figure(figsize=(8,6))
