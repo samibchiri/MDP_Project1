@@ -36,12 +36,12 @@ for i in range(len(roundedProb)):
     roundedProb[i]=round(roundedProb[i],2)
 
 roundedProb=roundedProb/100
-
 if __name__ == "__main__":
     plt.bar(range(len(roundedProb)),roundedProb,color="green",width=0.4,alpha=0.8)
 
     plt.hist(demandData,density=True,color="blue",width=0.4,alpha=0.4)
 
     plt.show()
+
 
 
