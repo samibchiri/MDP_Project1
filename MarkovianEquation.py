@@ -5,7 +5,7 @@ from MarkovianDist import NextCatMatrix
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-gamma=0.999
+gamma=0.95
 OrderCost = 3
 HoldingCost = 1
 ShortageCost = 5
