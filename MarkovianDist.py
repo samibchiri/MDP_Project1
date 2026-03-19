@@ -84,9 +84,9 @@ for i in range(len(demandData)-1):
     #NextCatMatrix[prev_index,next_index]+=1/countLowMidHigh[prev_index]
     NextCatMatrix[prev_index, next_index] += 1
 
-NextCatMatrix=np.array([[30,0,0],[0,30,0],[0,0,40]])
+#NextCatMatrix=np.array([[30,0,0],[0,30,0],[0,0,40]])
 #NextCatMatrix=np.array([[0,30,0],[0,30,0],[0,40,0]])
-#NextCatMatrix=np.array([[30,0,0],[30,0,0],[40,0,0]])
+#NextCatMatrix=np.array([[30,0,0],[0,30,0],[0,0,40]])
 Categories=["Low","Med","High"]
 if __name__ == "__main__":
     plt.figure(figsize=(8,6))

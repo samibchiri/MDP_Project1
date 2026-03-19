@@ -2,6 +2,8 @@ import numpy as np
 from ProbCalculation import roundedProb,statespaceLength
 from RewardMatrix import rewardMatrix
 from MarkovianDist import NextCatMatrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 gamma=0.999
 OrderCost = 3
@@ -69,6 +71,7 @@ rewardMatrixLow = np.ones((statespaceLength, statespaceLength)) * 10e6
 newroundedProb = [ScaledProbLowPrevDem, ScaledProbMidPrevDem, ScaledProbHighPrevDem]
 def catRewardMatrixGen(cat):
     probCat=newroundedProb[cat]
+    catRewardMatrix= np.ones((statespaceLength, statespaceLength)) * 10e6
     for state in range(statespaceLength):
         for action in range(statespaceLength - state):
             ExpectedCost = 0
@@ -78,8 +81,8 @@ def catRewardMatrixGen(cat):
                 shortage = max(0, demand - (state + produced))
                 addedCost = OrderCost * produced + HoldingCost * leftOver + ShortageCost * shortage
                 ExpectedCost += addedCost * probCat[demand]
-            rewardMatrix[state, action] = ExpectedCost
-    return rewardMatrix
+            catRewardMatrix[state, action] = ExpectedCost
+    return catRewardMatrix
 
 rewardMatrices[0]=catRewardMatrixGen(0)
 rewardMatrices[1]=catRewardMatrixGen(1)
@@ -100,8 +103,7 @@ def MarkovianBellmanEquation(rewardMatrix,NextCatMatrix,gamma,max_iterations,tol
                     newroundedProb=[ScaledProbLowPrevDem,ScaledProbMidPrevDem,ScaledProbHighPrevDem][cat]
                     for demand in range(len(newroundedProb)):
                         new_state=max(0,state+action-demand)
-                        for next_cat in range(3):
-                            expected_future_cost+=newroundedProb[demand]*v_old[new_state,next_cat]*NextCatMatrix[demandCat(demand,LowMidHighIndex)][next_cat]/sum(NextCatMatrix[demandCat(demand,LowMidHighIndex)])
+                        expected_future_cost+=newroundedProb[demand]*v_old[new_state,demandCat(demand,LowMidHighIndex)]
                     action_value = rewardMatrix[state, action] + gamma * expected_future_cost
                     action_values.append(action_value)
                 v_new[state,cat]=min(action_values)
@@ -115,20 +117,21 @@ def Markovian_policy_extraction(V, rewardMatrix, gamma):
     policy = np.zeros((n,3))
     for state in range(n):
         for cat in range(3):
+            if(i!=0):
+                rewardMatrix = rewardMatrices[cat]
             action_values = []
             newroundedProb = [ScaledProbLowPrevDem, ScaledProbMidPrevDem, ScaledProbHighPrevDem][cat]
             for action in range(n-state):
                 expected_future_cost=0
                 for demand in range(len(newroundedProb)):
                     new_state = max(0, state + action - demand)
-                    for next_cat in range(3):
-                        expected_future_cost += newroundedProb[demand] * V[new_state, next_cat] * NextCatMatrix[demandCat(demand,LowMidHighIndex)][next_cat]/sum(NextCatMatrix[demandCat(demand,LowMidHighIndex)])
+                    expected_future_cost += newroundedProb[demand] * V[new_state, demandCat(demand,LowMidHighIndex)]
                 action_value = rewardMatrix[state, action] + gamma * expected_future_cost
                 action_values.append(action_value)
             policy[state,cat]=np.argmin(action_values)
     return policy
 
-V= MarkovianBellmanEquation(rewardMatrix, NextCatMatrix,gamma, 100, 1e-3)
+V= MarkovianBellmanEquation(rewardMatrix, NextCatMatrix,gamma, 1000, 1e-6)
 policy = Markovian_policy_extraction(V, rewardMatrix, gamma)
 
 print(V)
